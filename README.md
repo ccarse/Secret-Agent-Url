@@ -22,6 +22,7 @@ My take on a url monitoring tool.
   ```
 
 # TODO 
+- [ ] Better name
 - [ ] Error handling
 - [ ] More customizable and richer output options
 - [ ] Video quickstart tutorial
