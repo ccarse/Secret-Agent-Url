@@ -21,7 +21,6 @@ if (!fs.existsSync(config.cache_dir)) {
   console.log('Successfully created ' + config.cache_dir);
 }
 
-
 function send_email(subject, bodyText) {
   var mailOptions = {
       from: config.email.options.from,
@@ -81,7 +80,7 @@ function foutput(type, jobName, content, summary) {
     result.push(content);
   }
 
-  return result
+  return result;
 }
 
 function my_unified_diff(fromText, toText, n, lineterm) {
@@ -128,9 +127,10 @@ var details = [];
 function process_job(job, callback) {
   console.log('Now processing: ' + job.name);
   var result = {};
+  var jobFileName = job.name.replace(/[^a-z0-9_\-]/gi, '_');
   result.job = job;
 
-  var filePath = path.resolve(config.cache_dir, job.name);
+  var filePath = path.resolve(config.cache_dir, jobFileName);
 
   var requestOptions = {
     url: job.location,
@@ -160,7 +160,7 @@ function process_job(job, callback) {
       var base = stringToLineArray(fs.readFileSync(filePath, {encoding: 'utf8'}));
       var newText = stringToLineArray(result.content);
       
-      diff = my_unified_diff(base, newText, 0, '\n');
+      var diff = my_unified_diff(base, newText, 0, '\n');
 
       if (diff.length > 0) {
         console.log(job.name + ' has changed - adding diff');
@@ -184,7 +184,7 @@ function process_job(job, callback) {
   });
 }
 
-jobs = config.urls;
+var jobs = config.urls;
 
 console.log('Processing ' + jobs.length + ' jobs');
 
