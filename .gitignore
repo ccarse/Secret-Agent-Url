@@ -31,3 +31,6 @@ cache
 *.backup
 
 .settings
+dist/
+
+launch.ps1
