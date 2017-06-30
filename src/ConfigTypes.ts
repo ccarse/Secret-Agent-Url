@@ -1,4 +1,4 @@
-import { SmtpOptions } from "@types/nodemailer-smtp-transport";
+import { SmtpOptions } from "nodemailer-smtp-transport";
 
 //
 // Type declarations
@@ -17,8 +17,8 @@ export interface IEmailConfig {
 }
 
 export interface IEmailOptionsConfig {
-  fromEmailAddress: string;
-  toEmailAddress: string;
+  fromEmailAddress?: string;
+  toEmailAddress?: string;
 }
 
 export interface IUrlConfig {
