@@ -3,25 +3,25 @@ import { SmtpOptions } from "nodemailer-smtp-transport";
 //
 // Type declarations
 //
-export interface IJobConfig {
-  email: IEmailConfig;
-  urls: IUrlConfig[];
+export interface JobConfig {
+  email?: EmailConfig;
+  urls: UrlConfig[];
   user_agent?: string;
   cache_dir?: string;
   proxy?: string;
 }
 
-export interface IEmailConfig {
+export interface EmailConfig {
   smtp: SmtpOptions;
-  options: IEmailOptionsConfig;
+  options: EmailOptionsConfig;
 }
 
-export interface IEmailOptionsConfig {
+export interface EmailOptionsConfig {
   fromEmailAddress?: string;
   toEmailAddress?: string;
 }
 
-export interface IUrlConfig {
+export interface UrlConfig {
   name: string;
   location: string;
   filter?: (content: string) => string;

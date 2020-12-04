@@ -34,3 +34,4 @@ cache
 dist/
 
 launch.ps1
+launch.sh

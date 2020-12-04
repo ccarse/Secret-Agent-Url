@@ -2,12 +2,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as rp from 'request-promise-native';
 
-import { IUrlConfig } from "ConfigTypes";
+import { UrlConfig } from "ConfigTypes";
 import { my_unified_diff } from "./DiffHelpers";
 import { FormatOutput } from "./FormatOutput";
 import { stringToLineArray } from "./StringHelpers";
 
-export function ProcessJob(urlConfig: IUrlConfig, cacheDir: string, userAgent?: {'User-Agent': string}, proxy?: string): Promise<IJobResult> {
+export async function ProcessJob(urlConfig: UrlConfig, cacheDir: string, userAgent?: {'User-Agent': string}, proxy?: string) {
 
   console.log('Now processing: ' + urlConfig.name);
   
@@ -19,23 +19,23 @@ export function ProcessJob(urlConfig: IUrlConfig, cacheDir: string, userAgent?: 
     url: urlConfig.location,
     headers: userAgent,
     method: urlConfig.postData ? 'POST' : 'GET',
-    form: urlConfig.postData ? urlConfig.postData : undefined,
+    form: urlConfig.postData || undefined,
     proxy
   };
 
   console.log('Request options: ' + JSON.stringify(requestOptions));
 
-  return rp(requestOptions)
-  .then( bodyString => {
+  try {
+    const bodyString = await rp(requestOptions);
     let result: IJobResult = {};
     const resultString: string = urlConfig.filter ? urlConfig.filter(bodyString) : bodyString;
 
     if (fs.existsSync(filePath)) {
       console.log(filePath + ' exists - creating unified diff');
 
-      const base = stringToLineArray(fs.readFileSync(filePath, {encoding: 'utf8'}));
+      const base = stringToLineArray(fs.readFileSync(filePath, { encoding: 'utf8' }));
       const newText = stringToLineArray(resultString);
-      
+
       const diff = my_unified_diff(base, newText, 0, '\n');
 
       if (diff.length > 0) {
@@ -54,16 +54,14 @@ export function ProcessJob(urlConfig: IUrlConfig, cacheDir: string, userAgent?: 
       fs.writeFileSync(filePath, resultString);
     } catch (e) {
       console.log('Error writing ' + urlConfig.name + ' to file. \n' + e);
-      result = {error: e};
+      result = { error: e };
     }
-
     return result;
-  })
-  .catch( err => {
+  } catch (err) {
     console.log('Error processing job: ' + urlConfig.name);
     console.log(err);
-    return {error: err};
-  });
+    return { error: err };
+  }
 }
 
 export interface IJobResult {

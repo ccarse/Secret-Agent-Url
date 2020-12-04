@@ -1,8 +1,8 @@
 import * as nodemailer from 'nodemailer';
 
-import { IEmailConfig } from "ConfigTypes";
+import { EmailConfig } from "ConfigTypes";
 
-export function send_email(emailConfig: IEmailConfig, subject: string, bodyText: string) {
+export function send_email(emailConfig: EmailConfig, subject: string, bodyText: string) {
   
   try {
     const emailTransporter = nodemailer.createTransport(emailConfig.smtp);

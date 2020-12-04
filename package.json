@@ -1,29 +1,22 @@
 {
   "name": "secret-agent-url",
-  "version": "0.0.2",
   "description": "Monitor urls (and filter to only what you want to watch) and be notified by email when they change. ",
   "main": "dist/Secret-Agent-Url.js",
   "dependencies": {
-    "@types/async": "^2.0.40",
-    "@types/cheerio": "^0.22.1",
-    "@types/nodemailer": "^1.3.32",
-    "@types/request-promise-native": "^1.0.5",
-    "async": "^2.4.1",
-    "cheerio": "^1.0.0-rc.1",
-    "difflib": "~0.2.4",
-    "nodemailer": "^4.0.1",
-    "request": "^2.81.0",
-    "request-promise-native": "^1.0.4"
-  },
-  "devDependencies": {
-    "typescript": "^2.3.4",
-    "tslint": "5.4.1"
+    "@types/nodemailer": "^6.4.0",
+    "@types/request-promise-native": "^1.0.17",
+    "difflib": "^0.2.4",
+    "eslint": "^7.14.0",
+    "nodemailer": "^6.4.16",
+    "prettier": "^2.2.1",
+    "prettier-eslint": "^12.0.0",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.9",
+    "ts-node": "^9.1.0",
+    "typescript": "^4.1.2"
   },
   "scripts": {
-    "clean": "rmdir /s /q dist",
-    "lint": "tslint -c tslint.json 'src/**/*.{ts,tsx}'",
-    "build": "npm run lint && tsc",
-    "start": "npm run build && node dist/Secret-Agent-Url.js"
+    "start": "ts-node src/Secret-Agent-Url.ts"
   },
   "repository": {
     "type": "git",

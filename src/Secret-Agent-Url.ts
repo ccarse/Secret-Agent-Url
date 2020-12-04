@@ -4,36 +4,40 @@ import { config } from './config';
 import { IJobResult, ProcessJob } from "./ProcessJob";
 import { send_email } from './SendMail';
 
-// Check to see if cache directory exists and if not create it.
-const cacheDir = config.cache_dir || '/cache';
+const main = async () => { 
 
-if (!fs.existsSync(cacheDir)) {
-  try {
-    console.log('Cache directory not found. Creating...');
-    fs.mkdirSync(cacheDir);
-  } catch (e) {
-    console.log('Error creating cache directory.');
-    throw e;
+  const cacheDir = config.cache_dir || '/cache';
+
+  // Check to see if cache directory exists and if not create it.
+  if (!fs.existsSync(cacheDir)) {
+    try {
+      console.log('Cache directory not found. Creating...');
+      fs.mkdirSync(cacheDir);
+    } catch (e) {
+      console.log('Error creating cache directory.');
+      throw e;
+    }
+    console.log('Successfully created ' + cacheDir);
   }
-  console.log('Successfully created ' + cacheDir);
-}
 
-const startTime = new Date();
+  const startTime = new Date();
 
-const urlConfigs = config.urls;
+  const urlConfigs = config.urls;
 
-console.log('Processing ' + urlConfigs.length + ' jobs');
+  console.log('Processing ' + urlConfigs.length + ' jobs');
 
-const urlPromises = urlConfigs.map( urlConfig => {
-  const userAgent = urlConfig.user_agent ? urlConfig.user_agent : config.user_agent;
-  const userAgentObj = userAgent ? {'User-Agent': userAgent} : undefined;
+  const urlPromises = urlConfigs.map( urlConfig => {
+    const userAgent = urlConfig.user_agent ? urlConfig.user_agent : config.user_agent;
+    const userAgentObj = userAgent ? {'User-Agent': userAgent} : undefined;
 
-  return ProcessJob(urlConfig, cacheDir, userAgentObj, config.proxy);
-});
+    return ProcessJob(urlConfig, cacheDir, userAgentObj, config.proxy);
+  });
 
-Promise.all(urlPromises).then(results => {
- 
-  if (results) {
+  try {
+    const results = await Promise.all(urlPromises);
+
+    if (!results) { console.log('No results.'); return; }
+
     console.log('Start time: ' + startTime);
     console.log(results.length + ' jobs complete');
     const endTime = new Date();
@@ -70,14 +74,16 @@ Promise.all(urlPromises).then(results => {
       const seconds = (endTime.getTime() - startTime.getTime()) / 1000;
       console.log('Watched ' + config.urls.length + ' URLs in ' + seconds + ' seconds\n');
 
-      const emailSubject = 'Changes detected (' + summary.length + ')';
-      send_email(config.email, emailSubject, shortSummary + '\n' + details.join('\n'));
-
+      if (config.email) {
+        const emailSubject = 'Changes detected (' + summary.length + ')';
+        send_email(config.email, emailSubject, shortSummary + '\n' + details.join('\n'));
+      }
     } else {
       console.log('no details collected - not printing');
     }
+  } catch (err) {
+    console.log("Fatal error! " + err);
   }
-})
-.catch(err => {
-  console.log("Fatal error! " + err);
-});
+};
+
+main();
