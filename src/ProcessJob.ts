@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as rp from 'request-promise-native';
+import fetch from 'node-fetch';
 
 import { UrlConfig } from "ConfigTypes";
 import { my_unified_diff } from "./DiffHelpers";
@@ -15,18 +15,16 @@ export async function ProcessJob(urlConfig: UrlConfig, cacheDir: string, userAge
 
   const filePath = path.resolve(cacheDir, jobFileName);
 
-  const requestOptions = {
-    url: urlConfig.location,
+  const requestOptions: RequestInit = {
     headers: userAgent,
     method: urlConfig.postData ? 'POST' : 'GET',
-    form: urlConfig.postData || undefined,
-    proxy
+    body: urlConfig.postData && JSON.stringify(urlConfig.postData) || undefined,
   };
 
   console.log('Request options: ' + JSON.stringify(requestOptions));
 
   try {
-    const bodyString = await rp(requestOptions);
+    const bodyString = await (await fetch(urlConfig.location, requestOptions)).text();
     let result: IJobResult = {};
     const resultString: string = urlConfig.filter ? urlConfig.filter(bodyString) : bodyString;
 

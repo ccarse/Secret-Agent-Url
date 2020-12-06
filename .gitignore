@@ -35,3 +35,5 @@ dist/
 
 launch.ps1
 launch.sh
+src/config.ts
+.env

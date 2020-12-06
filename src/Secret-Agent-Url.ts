@@ -1,8 +1,9 @@
+require('dotenv').config();
 import * as fs from 'fs';
 
 import { config } from './config';
 import { IJobResult, ProcessJob } from "./ProcessJob";
-import { send_email } from './SendMail';
+import { send_notification as send_notifications } from './SendNotifications';
 
 const main = async () => { 
 
@@ -74,10 +75,8 @@ const main = async () => {
       const seconds = (endTime.getTime() - startTime.getTime()) / 1000;
       console.log('Watched ' + config.urls.length + ' URLs in ' + seconds + ' seconds\n');
 
-      if (config.email) {
-        const emailSubject = 'Changes detected (' + summary.length + ')';
-        send_email(config.email, emailSubject, shortSummary + '\n' + details.join('\n'));
-      }
+      const notificationSubject = 'Changes detected (' + summary.length + ')';
+      send_notifications(config.notifiers, notificationSubject, shortSummary + '\n' + details.join('\n'));
     } else {
       console.log('no details collected - not printing');
     }

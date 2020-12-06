@@ -1,24 +1,14 @@
-import { SmtpOptions } from "nodemailer-smtp-transport";
+import { createTransport } from 'nodemailer';
 
 //
 // Type declarations
 //
 export interface JobConfig {
-  email?: EmailConfig;
+  notifiers: Notifiers[];
   urls: UrlConfig[];
   user_agent?: string;
   cache_dir?: string;
   proxy?: string;
-}
-
-export interface EmailConfig {
-  smtp: SmtpOptions;
-  options: EmailOptionsConfig;
-}
-
-export interface EmailOptionsConfig {
-  fromEmailAddress?: string;
-  toEmailAddress?: string;
 }
 
 export interface UrlConfig {
@@ -28,3 +18,15 @@ export interface UrlConfig {
   postData?: any;
   user_agent?: string;
 }
+
+export interface PushoverNotifier {
+  notifierType: 'PUSHOVER';
+  pushoverUser: string;
+  pushoverToken: string;
+}
+
+export interface ConsoleNotifier {
+  notifierType: 'CONSOLE';
+}
+
+export type Notifiers = PushoverNotifier | ConsoleNotifier;
